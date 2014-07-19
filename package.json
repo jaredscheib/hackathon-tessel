@@ -4,7 +4,9 @@
   "description": "Hardware hacking with JavaScript",
   "main": "main.js",
   "dependencies": {
+    "ambient-attx4": "^0.1.8",
     "camera-vc0706": "^0.1.6",
+    "express": "^4.6.1",
     "tessel": "^0.3.8"
   },
   "devDependencies": {},
