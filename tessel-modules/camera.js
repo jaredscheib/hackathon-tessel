@@ -6,7 +6,9 @@ var config = require('../config.js');
 
 process.env.TESSEL_UPLOAD_DIR = './images';
 
-var cameraConnection = net.connect(config.port, config.host);
+var cameraConnection = net.connect(config.port, config.host, function(){
+  console.log('Camera connected to server');
+});
 
 var cameraInit = function() {
   var notificationLED = tessel.led[3]; //LED to notify when we're taking a picture
@@ -21,12 +23,14 @@ var cameraInit = function() {
     var responseBody = '';
 
     cameraConnection.on('data', function(data) {
-      responseBody += data;
+      responseBody += data.toString();
+      console.log('data: ', responseBody);
+      cameraRouter[responseBody.command].apply(null, responseBody.params);
     });
 
     cameraConnection.on('end', function() {
       responseBody = JSON.parse(responseBody);
-      console.log(responseBody);
+      console.log('end: ', responseBody);
       cameraRouter[responseBody.command].apply(null, responseBody.params);
     });
   });
@@ -41,38 +45,17 @@ camera.on ('error', function( err ) {
 });
 
 cameraRouter = {
-  photo: function() {
-    return capturePhoto();
-  },
-
-  video: function(frames) {
-    return captureVideo(frames);
+  capturePhoto: function(frames) {
+    return stream(frames);
   }
 };
 
-var capturePhoto = function() {
-  if( !camera.isReady ) return;
-
-  camera.takePicture( function( err, image ) {
-    if( err ){
-      console.log( 'error taking image', err );
-    }else{
-      notificationLED.low();
-      var name = 'IMG_' + Math.floor(Date.now()*1000) + '.jpg';
-      console.log( 'Picture saving as', name, '...' );
-      // process.sendfile( name, image );
-      console.log( 'done.' );
-      camera.disable();
-    }
-  });
-};
-
-var captureVideo = function( frames ) {
+var stream = function( frames ) {
   if( !camera.isReady ) return;
 
   camera.setResolution( 'vga' ); //set picture resolution, highest is vga
   if( frames <= 0 ) camera.disable();
-  frames = frames || 5;
+  frames = frames || 1;
 
   camera.takePicture( function( err, image ) {
     if( err ){
@@ -80,19 +63,18 @@ var captureVideo = function( frames ) {
     }else{
       notificationLED.low();
       var name = 'VID_' + Math.floor(Date.now()*1000) + '.jpg';
-      console.log( 'Video frame saving as', name, '...' );
+      console.log( 'Saving frame as', name, '...' );
       // process.sendfile( name, image );
       console.log( 'done.' );
     }
     console.log( 'frames', frames );
     frames--;
-    return captureVideo( frames );
+    return stream( frames );
   });
 };
 
 cameraInit();
 
 module.exports = {
-  capturePhoto: capturePhoto,
-  captureVideo: captureVideo
+  stream: stream
 }
