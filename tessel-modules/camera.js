@@ -10,8 +10,9 @@ var cameraConnection = net.connect(config.port, config.host, function(){
   console.log('Camera connected to server');
 });
 
+var notificationLED = tessel.led[3]; //LED to notify when we're taking a picture
+
 var cameraInit = function() {
-  var notificationLED = tessel.led[3]; //LED to notify when we're taking a picture
   camera.isReady = false;
   camera.setResolution( 'vga' ); //set picture resolution, highest is vga
 
@@ -19,24 +20,15 @@ var cameraInit = function() {
     notificationLED.high();
     // camera.setCompression( 0 ); //set compression, minimum is ?
     camera.isReady = true;
-
-    var responseBody = '';
+    console.log('camera ready');
+    stream(2);
 
     cameraConnection.on('data', function(data) {
-      responseBody += data.toString();
-      console.log('data: ', responseBody);
-      cameraRouter[responseBody.command].apply(null, responseBody.params);
+      console.log(data);
+      data = JSON.parse(data.toString());
+      console.log('data: ', data);
+      cameraRouter[data.command].call(null, data.param);
     });
-
-    cameraConnection.on('end', function() {
-      responseBody = JSON.parse(responseBody);
-      console.log('end: ', responseBody);
-      cameraRouter[responseBody.command].apply(null, responseBody.params);
-    });
-  });
-
-  camera.on( 'picture', function(buffer) {
-    cameraConnection.write(buffer);
   });
 };
 
@@ -54,20 +46,26 @@ var stream = function( frames ) {
   if( !camera.isReady ) return;
 
   camera.setResolution( 'vga' ); //set picture resolution, highest is vga
-  if( frames <= 0 ) camera.disable();
+  if( frames <= 0 ) {
+    console.log('disable camera');
+    return camera.disable();
+  }
   frames = frames || 1;
+  console.log( frames, 'photos remaining. capturing photo...' );
 
   camera.takePicture( function( err, image ) {
     if( err ){
       console.log( 'error taking image', err );
     }else{
       notificationLED.low();
-      var name = 'VID_' + Math.floor(Date.now()*1000) + '.jpg';
-      console.log( 'Saving frame as', name, '...' );
+      // console.log('hello');
+      // var name = 'VID_' + Math.floor(Date.now()*1000) + '.jpg';
+      // console.log( 'Saving frame as', name, '...' );
       // process.sendfile( name, image );
-      console.log( 'done.' );
+      console.log('sending photo buffer to server: ', image)
+      cameraConnection.write(image);
+      console.log( 'photo sent to server.' );
     }
-    console.log( 'frames', frames );
     frames--;
     return stream( frames );
   });
