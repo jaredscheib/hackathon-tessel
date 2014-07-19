@@ -21,7 +21,6 @@ var cameraInit = function() {
     // camera.setCompression( 0 ); //set compression, minimum is ?
     camera.isReady = true;
     console.log('camera ready');
-    stream(2);
 
     cameraConnection.on('data', function(data) {
       console.log(data);
