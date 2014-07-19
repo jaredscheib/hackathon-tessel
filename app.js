@@ -1,14 +1,15 @@
-var express = require( 'express' );
+var net = require('net');
+var camera = require('tessel-modules/camera');
 
-var tessel = require( 'tessel' );
-var camera = require( './tessel-modules/camera.js' );
-
-var app = express();
-
-app.get( '/', function( req, res ){
-  res.send('Hello world');
+var server = net.createServer( function(c) {
+  console.log('server connected');
+  c.on('end', function(){
+    console.log('server disconnected');
+  });
+  c.write('hello\r\n');
+  c.pipe(c);
 });
 
-var server = app.listen( 3000, function() {
-  console.log( 'Server listening on port %d', server.address().port );
-});
+server.listen(8124, function() {
+  console.log('listening');
+})
