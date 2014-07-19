@@ -1,0 +1,24 @@
+{
+  "name": "tessel-code",
+  "version": "0.0.0",
+  "description": "Hardware hacking with JavaScript",
+  "main": "main.js",
+  "dependencies": {
+    "camera-vc0706": "^0.1.6",
+    "tessel": "^0.3.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaredscheib/hackathon-tessel.git"
+  },
+  "author": "Jared Scheib",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaredscheib/hackathon-tessel/issues"
+  },
+  "homepage": "https://github.com/jaredscheib/hackathon-tessel"
+}
