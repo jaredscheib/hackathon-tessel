@@ -2,7 +2,7 @@ var tessel = require( 'tessel' );
 var camera = require( 'camera-vc0706' ).use( tessel.port['D'] );
 
 var net = require('net');
-var config = require('./config.js');
+var config = require('../config.js');
 
 process.env.TESSEL_UPLOAD_DIR = './images';
 

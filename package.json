@@ -5,8 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "ambient-attx4": "^0.1.8",
-    "camera-vc0706": "^0.1.6",
-    "tessel": "^0.3.8"
+    "camera-vc0706": "^0.1.6"
   },
   "devDependencies": {},
   "scripts": {
