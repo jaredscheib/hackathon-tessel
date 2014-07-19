@@ -1,4 +1,5 @@
 var net = require('net');
+var config = require('./config.js');
 var camera = require('tessel-modules/camera');
 
 var server = net.createServer( function(c) {
@@ -10,6 +11,6 @@ var server = net.createServer( function(c) {
   c.pipe(c);
 });
 
-server.listen(8124, function() {
-  console.log('listening');
+server.listen(config.port, function() {
+  console.log('Listening at ' + config.host + ':' + config.port);
 })
