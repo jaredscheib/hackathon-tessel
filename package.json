@@ -4,6 +4,7 @@
   "description": "Hardware hacking with JavaScript",
   "main": "main.js",
   "dependencies": {
+    "accel-mma84": "^0.2.3",
     "ambient-attx4": "^0.1.8",
     "camera-vc0706": "^0.1.6"
   },
