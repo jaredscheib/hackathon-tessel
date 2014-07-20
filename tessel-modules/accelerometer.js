@@ -37,15 +37,15 @@ var click = function( data ) {
   if( Math.abs( x - lastX ) > 70 && waitX === false ) {
     waitX = true;
     noXClick();
-    accelConnection.write( JSON.stringify( 'x-click' ) );
-    console.log( 'X click' );
+    accelConnection.write( 'x-click' );
+    console.log( 'x-click' );
   }
 
   if( Math.abs( z - lastZ ) > 70 && wait === false ) {
     wait = true;
     noClick();
-    accelConnection.write( JSON.stringify( 'z-click' ) );
-    console.log( 'click' );
+    accelConnection.write( 'z-click' );
+    console.log( 'z-click' );
   }
 
   lastX = x;
